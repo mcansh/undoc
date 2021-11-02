@@ -17,7 +17,7 @@ interface VersionHead {
   isLatest: boolean;
 }
 
-async function getVersions(refs: Array<string>): Promise<Array<VersionHead>> {
+function getVersions(refs: Array<string>): Array<VersionHead> {
   let tags = refs.map((ref) => ref.replace(/^refs\/tags\//, ""));
   let validTags = tags.filter((ref) =>
     semver.valid(ref.replace(/^refs\/tags\//, ""))
