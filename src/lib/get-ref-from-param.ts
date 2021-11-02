@@ -1,9 +1,16 @@
 import * as semver from "semver";
 
+/**
+ *
+ * @param {string} refParam the head or full version in the url (e.g. v6 or v6.0.1)
+ * @param {Array<string>} refs an array of full versions or branch names
+ * @param {string} latestBranchRef the branch ref you want the latest version to map to
+ * @returns {string | null}
+ */
 function getRefFromParam(
   refParam: string,
   refs: Array<string>,
-  latestBranch: string
+  latestBranchRef: string
 ): string | null {
   if (refs.length === 0) {
     throw new Error("No refs found");
@@ -27,7 +34,7 @@ function getRefFromParam(
   }
 
   if (semver.satisfies(latestTag, refParam, { includePrerelease: true })) {
-    return latestBranch;
+    return latestBranchRef;
   }
 
   let maxSatisfying = semver.maxSatisfying(refs, refParam, {
