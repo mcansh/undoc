@@ -23,11 +23,9 @@ function getRefFromParam(
       : `refs/heads/${refParam}`;
   }
 
-  let sortedValidTags = refs
+  let [latestTag] = refs
     .filter((ref) => semver.valid(ref))
     .sort(semver.rcompare);
-
-  let latestTag = sortedValidTags.at(0);
 
   if (!latestTag) {
     throw new Error("No latest ref found");
