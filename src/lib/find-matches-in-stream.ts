@@ -1,10 +1,10 @@
-import path from "path";
+import path from "node:path";
 
 import tar, { Headers as TarHeaders } from "tar-stream";
 
 import { bufferStream } from "./buffer-from-stream";
 
-interface File {
+export interface File {
   type: "file";
   path: string;
   content: string;
