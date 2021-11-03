@@ -6,7 +6,7 @@ import gunzip from "gunzip-maybe";
 
 import { bufferStream } from "./buffer-from-stream";
 
-const agent = new https.Agent({
+let agent = new https.Agent({
   keepAlive: true,
 });
 
@@ -29,23 +29,23 @@ async function getPackage(
   version: string,
   getOptions: RequestOptions = {}
 ): Promise<NodeJS.ReadWriteStream | null> {
-  const tarballURL = `https://github.com/${packageName}/archive/${version}.tar.gz`;
+  let tarballURL = `https://github.com/${packageName}/archive/${version}.tar.gz`;
 
   console.debug("Fetching package for %s from %s", packageName, tarballURL);
 
-  const { hostname, pathname } = new URL(tarballURL);
+  let { hostname, pathname } = new URL(tarballURL);
 
-  const options: RequestOptions = {
+  let options: RequestOptions = {
     agent: agent,
     hostname: hostname,
     path: pathname,
     ...getOptions,
   };
 
-  const res: any = await get(options);
+  let res: any = await get(options);
 
   if (res.statusCode === 200) {
-    const stream = res.pipe(gunzip());
+    let stream = res.pipe(gunzip());
     // stream.pause();
     return stream;
   }
@@ -54,7 +54,7 @@ async function getPackage(
     return null;
   }
 
-  const content = (await bufferStream(res)).toString("utf-8");
+  let content = (await bufferStream(res)).toString("utf-8");
 
   console.error(
     "Error fetching tarball for %s@%s (status: %s)",

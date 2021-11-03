@@ -5,7 +5,7 @@
  */
 function bufferStream(stream: NodeJS.ReadWriteStream): Promise<Buffer> {
   return new Promise((accept, reject) => {
-    const chunks: Array<any> = [];
+    let chunks: Array<any> = [];
 
     stream
       .on("error", reject)

@@ -29,7 +29,7 @@ async function findMatchingEntries(
 ): Promise<Array<File>> {
   // filename = /some/dir/name
   return new Promise((accept, reject) => {
-    const entries: { [path: string]: FileEntry } = {};
+    let entries: { [path: string]: FileEntry } = {};
 
     stream
       .pipe(tar.extract())
@@ -66,7 +66,7 @@ async function findMatchingEntries(
         }
 
         try {
-          const content = await bufferStream(stream);
+          let content = await bufferStream(stream);
 
           entry = {
             type: "file",
