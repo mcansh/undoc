@@ -14,9 +14,9 @@ import { processMarkdown } from "@ryanflorence/md";
 async function reactRouterProcessMarkdown(
   baseUrl: URL,
   content: string,
-  opts: { linkOriginPath?: string; preserveLinks?: boolean } = {}
+  opts: { linkOriginPath: string; preserveLinks?: boolean }
 ): Promise<string> {
-  let preserveLinks = opts.preserveLinks || false;
+  let preserveLinks = opts.preserveLinks ?? false;
 
   return processMarkdown(content, {
     /*
