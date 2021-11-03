@@ -74,7 +74,7 @@ async function reactRouterProcessMarkdown(
       let href = cleanMarkdownPath(sourceHref);
 
       try {
-        let from = trailingSlashIt(currentUrl.origin + currentUrl.pathname);
+        let from = addTrailingSlash(currentUrl.origin + currentUrl.pathname);
         let to =
           href.startsWith("/") || currentUrlIsIndex ? href : `../${href}`;
         let resolved = resolveUrl(from, to);
@@ -95,8 +95,8 @@ function getCurrentUrl(baseUrl: URL, pathFromServer?: string | undefined): URL {
     );
   }
 
-  let withNoTrailingSlash = unTrailingSlashIt(pathFromServer);
-  let withLeadingSlash = unLeadingSlashIt(withNoTrailingSlash);
+  let withNoTrailingSlash = removeTrailingSlash(pathFromServer);
+  let withLeadingSlash = removeLeadingSlash(withNoTrailingSlash);
   let toPath = cleanMarkdownPath(withLeadingSlash);
 
   return resolveUrl(baseUrl.origin, toPath);
@@ -140,20 +140,19 @@ function cleanMarkdownPath(str: string): string {
 function isIndexPath(str?: string | undefined): boolean {
   if (!str) return false;
   let regex = /(\/index(\.md)?$|\/index(\.md)?(#))/;
-  return regex.test(unLeadingSlashIt(unTrailingSlashIt(str)));
+  return regex.test(removeLeadingSlash(removeTrailingSlash(str)));
 }
 
-// My WordPress past haunts the names of these utils, sorry not sorry!
-function unLeadingSlashIt(str: string): string {
+function removeLeadingSlash(str: string): string {
   return str.replace(/^\/+/, "");
 }
 
-function unTrailingSlashIt(str: string): string {
+function removeTrailingSlash(str: string): string {
   return str.replace(/\/+$/, "");
 }
 
-function trailingSlashIt(str: string): string {
-  return unTrailingSlashIt(str) + "/";
+function addTrailingSlash(str: string): string {
+  return removeTrailingSlash(str) + "/";
 }
 
 export {
@@ -163,8 +162,8 @@ export {
   resolveUrl,
   cleanMarkdownPath,
   isIndexPath,
-  unLeadingSlashIt,
-  unTrailingSlashIt,
-  trailingSlashIt,
+  removeLeadingSlash,
+  removeTrailingSlash,
+  addTrailingSlash,
 };
 export { remarkCodeBlocksShiki } from "@ryanflorence/md";

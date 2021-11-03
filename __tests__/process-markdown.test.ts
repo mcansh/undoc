@@ -1,27 +1,27 @@
 import { URL } from "url";
 import {
-  getCurrentUrl,
-  isRelativeUrl,
-  resolveUrl,
+  addTrailingSlash,
   cleanMarkdownPath,
+  getCurrentUrl,
   isIndexPath,
-  unLeadingSlashIt,
-  unTrailingSlashIt,
-  trailingSlashIt,
+  isRelativeUrl,
   processMarkdown,
-} from "../src";
+  removeLeadingSlash,
+  removeTrailingSlash,
+  resolveUrl,
+} from "../src/lib/process-markdown";
 
 describe("slash utilities", () => {
   it("removes trailing slashes from links", () => {
-    expect(unTrailingSlashIt("/foo/bar/")).toBe("/foo/bar");
+    expect(removeTrailingSlash("/foo/bar/")).toBe("/foo/bar");
   });
 
-  it("removes a leading slash", () => {
-    expect(unLeadingSlashIt("/foo/bar")).toBe("foo/bar");
+  it("removes leading slash", () => {
+    expect(removeLeadingSlash("/foo/bar")).toBe("foo/bar");
   });
 
   it("adds a trailing slash", () => {
-    expect(trailingSlashIt("/foo/bar")).toBe("/foo/bar/");
+    expect(addTrailingSlash("/foo/bar")).toBe("/foo/bar/");
   });
 });
 

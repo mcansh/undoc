@@ -1,4 +1,4 @@
-import { getRefFromParam } from "../src";
+import { getRefFromParam } from "../src/lib/get-ref-from-param";
 
 it("returns the correct ref", () => {
   let refs = [

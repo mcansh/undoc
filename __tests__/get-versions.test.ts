@@ -4,7 +4,7 @@ import {
   getTagFromRef,
   getVersionHead,
   getVersions,
-} from "../src";
+} from "../src/lib/get-versions";
 
 it("returns the branch or tag", () => {
   expect(getBranchOrTagFromRef("refs/heads/master")).toBe("master");
@@ -38,7 +38,7 @@ it("returns a version head", () => {
 });
 
 it("returns a VersionHead for each version", () => {
-  const versions = getVersions([
+  let versions = getVersions([
     "refs/heads/main",
     "refs/tags/v0.20.1",
     "refs/tags/v0.20.0",
