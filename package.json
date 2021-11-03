@@ -20,7 +20,7 @@
     "tar-stream": "2.2.0"
   },
   "devDependencies": {
-    "@tsconfig/node16": "1.0.2",
+    "@tsconfig/node12": "1.0.9",
     "@types/follow-redirects": "1.13.1",
     "@types/gunzip-maybe": "1.4.0",
     "@types/jest": "27.0.2",
