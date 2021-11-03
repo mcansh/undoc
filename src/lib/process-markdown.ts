@@ -1,4 +1,4 @@
-import { URL } from "node:url";
+import { URL } from "url";
 
 import { processMarkdown } from "@ryanflorence/md";
 

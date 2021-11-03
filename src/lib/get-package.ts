@@ -1,5 +1,5 @@
-import { URL } from "node:url";
-import type { RequestOptions } from "node:https";
+import { URL } from "url";
+import type { RequestOptions } from "https";
 
 import { https } from "follow-redirects";
 import gunzip from "gunzip-maybe";
