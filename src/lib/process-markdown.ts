@@ -68,8 +68,6 @@ async function reactRouterProcessMarkdown(
       // To resolve the correct href, we need to know the URL of the page the
       // link appears on. We also need to know if it's coming from an index
       // route.
-      console.log(opts);
-
       let currentUrl = getCurrentUrl(baseUrl, opts.linkOriginPath);
       let currentUrlIsIndex = isIndexPath(opts.linkOriginPath);
 
@@ -91,10 +89,6 @@ async function reactRouterProcessMarkdown(
 }
 
 function getCurrentUrl(baseUrl: URL, pathFromServer?: string | undefined): URL {
-  // @ts-expect-error testing purposes only
-  console.log({ window: typeof window });
-  console.log({ pathFromServer });
-
   if (!pathFromServer) {
     throw Error(
       "Resolving the current URL depends on a source path when called from the server."
