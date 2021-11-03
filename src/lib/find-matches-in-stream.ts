@@ -4,36 +4,38 @@ import tar, { Headers as TarHeaders } from "tar-stream";
 
 import { bufferStream } from "./buffer-from-stream";
 
-export type Entry =
-  | {
-      path: string;
-      type: TarHeaders["type"];
-      content?: never;
-    }
-  | {
-      type: "file";
-      content: string;
-      path: string;
-    };
+interface File {
+  type: "file";
+  path: string;
+  content: string;
+}
+
+interface Entry {
+  type: TarHeaders["type"];
+  path: string;
+  content?: never;
+}
+
+type FileEntry = File | Entry;
 
 /**
  * @param {NodeJS.ReadWriteStream} stream
  * @param {string} filename
- * @returns {Promise<Array<Entry>>}
+ * @returns {Promise<Array<File>>}
  */
 async function findMatchingEntries(
   stream: NodeJS.ReadWriteStream,
   filename: string
-): Promise<Array<Entry>> {
+): Promise<Array<File>> {
   // filename = /some/dir/name
   return new Promise((accept, reject) => {
-    const entries: { [path: string]: Entry } = {};
+    const entries: { [path: string]: FileEntry } = {};
 
     stream
       .pipe(tar.extract())
       .on("error", reject)
       .on("entry", async (header, stream, next) => {
-        let entry: Entry = {
+        let entry: FileEntry = {
           // Most packages have header names that look like `package/index.js`
           // so we shorten that to just `/index.js` here. A few packages use a
           // prefix other than `package/`. e.g. the firebase package uses the
@@ -80,9 +82,13 @@ async function findMatchingEntries(
           next(error);
         }
       })
-      .on("finish", () =>
-        accept(Object.values(entries).filter((entry) => entry.type === "file"))
-      );
+      .on("finish", () => {
+        let files = Object.values(entries).filter(
+          (entry): entry is File => entry.type === "file"
+        );
+
+        accept(files);
+      });
   });
 }
 
