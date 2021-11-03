@@ -6,7 +6,8 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "jest",
-    "build": "tsc"
+    "build": "tsc",
+    "dev": "tsc --watch"
   },
   "repository": "https://github.com/mcansh/undoc",
   "author": "Logan McAnsh <logan@mcan.sh> (https://mcan.sh/)",
