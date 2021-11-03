@@ -5,8 +5,7 @@
     "importHelpers": true,
     "removeComments": true,
     "outDir": "dist",
-    "declaration": true,
-    "incremental": true
+    "noEmit": true
   },
   "include": ["src/**/*.ts"]
 }

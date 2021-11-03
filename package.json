@@ -6,8 +6,8 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "jest",
-    "build": "tsc",
-    "dev": "tsc --watch"
+    "build": "./build.js",
+    "dev": "WATCH=1 ./build.js"
   },
   "repository": "https://github.com/mcansh/undoc",
   "author": "Logan McAnsh <logan@mcan.sh> (https://mcan.sh/)",
@@ -27,6 +27,8 @@
     "@types/node": "16.11.6",
     "@types/semver": "7.3.9",
     "@types/tar-stream": "2.2.2",
+    "esbuild": "0.13.12",
+    "esbuild-plugin-d.ts": "1.0.6",
     "jest": "27.3.1",
     "ts-jest": "27.0.7",
     "tslib": "2.3.1",
