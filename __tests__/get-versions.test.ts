@@ -32,7 +32,7 @@ it("returns a tag", () => {
 it("returns a version head", () => {
   expect(() => getVersionHead("refs/heads/master")).toThrowError();
   expect(getVersionHead("refs/tags/v0.0.1")).toBe("v0.0.1");
-  expect(getVersionHead("refs/tags/v0.0.1-beta.6")).toBe("v0.0.1-beta.6");
+  expect(getVersionHead("refs/tags/v0.0.1-beta.6")).toBe("v0.0.1");
   expect(getVersionHead("refs/tags/v0.1.0")).toBe("v0.1");
   expect(getVersionHead("refs/tags/v1.0.0")).toBe("v1");
 });
