@@ -79,7 +79,7 @@ async function reactRouterProcessMarkdown(
           href.startsWith("/") || currentUrlIsIndex ? href : `../${href}`;
         let resolved = resolveUrl(from, to);
         return resolved.pathname + resolved.search + resolved.hash;
-      } catch (_) {
+      } catch (error: unknown) {
         // who knows 🤷‍♂️, do nothing and we'll just return what they gave us
       }
 
@@ -115,16 +115,16 @@ function resolveUrl(from: string, to: string): URL {
       return new URL(pathname + search + hash);
     }
     return resolvedUrl;
-  } catch (e) {
+  } catch (error: unknown) {
     if (
-      e instanceof TypeError &&
-      e.toString() === "TypeError: Failed to construct 'URL': Invalid URL"
+      error instanceof TypeError &&
+      error.toString() === "TypeError: Failed to construct 'URL': Invalid URL"
     ) {
       throw TypeError(
         "Failed to resolve URLs. The `from` argument is an invalid URL."
       );
     }
-    throw e;
+    throw error;
   }
 }
 
@@ -134,6 +134,7 @@ function cleanMarkdownPath(str: string): string {
   if (regex.test(str)) {
     return str.replace(regex, "$4");
   }
+
   return str;
 }
 

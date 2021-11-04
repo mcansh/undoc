@@ -17,19 +17,31 @@ interface VersionHead {
   isLatest: boolean;
 }
 
-let branchOrTagRegex = /^refs\/(heads|tags)\//;
-let branchRegex = /^refs\/heads\//;
-let tagRegex = /^refs\/tags\//;
-
 function getBranchOrTagFromRef(ref: string): string {
-  return ref.replace(branchOrTagRegex, "");
+  let regex = /^refs\/(heads|tags)\//;
+  if (regex.test(ref)) {
+    return ref.replace(regex, "");
+  }
+
+  return ref;
 }
 
 function getBranchFromRef(ref: string): string {
-  return ref.replace(branchRegex, "");
+  let regex = /^refs\/heads\//;
+  if (regex.test(ref)) {
+    return ref.replace(regex, "");
+  }
+
+  return ref;
 }
+
 function getTagFromRef(ref: string): string {
-  return ref.replace(tagRegex, "");
+  let regex = /^refs\/tags\//;
+  if (regex.test(ref)) {
+    return ref.replace(regex, "");
+  }
+
+  return ref;
 }
 
 function getVersionHead(ref: string): string {
