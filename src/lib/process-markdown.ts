@@ -1,6 +1,7 @@
 import { URL } from "url";
 
 import { processMarkdown } from "@ryanflorence/md";
+import invariant from "tiny-invariant";
 
 /**
  *
@@ -89,11 +90,10 @@ async function reactRouterProcessMarkdown(
 }
 
 function getCurrentUrl(baseUrl: URL, pathFromServer?: string | undefined): URL {
-  if (!pathFromServer) {
-    throw Error(
-      "Resolving the current URL depends on a source path when called from the server."
-    );
-  }
+  invariant(
+    pathFromServer,
+    "Resolving the current URL depends on a source path when called from the server."
+  );
 
   let withNoTrailingSlash = removeTrailingSlash(pathFromServer);
   let withLeadingSlash = removeLeadingSlash(withNoTrailingSlash);

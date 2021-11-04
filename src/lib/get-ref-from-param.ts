@@ -1,4 +1,5 @@
 import * as semver from "semver";
+import invariant from "tiny-invariant";
 
 /**
  *
@@ -12,9 +13,7 @@ function getRefFromParam(
   refs: Array<string>,
   latestBranchRef: string
 ): string | null {
-  if (refs.length === 0) {
-    throw new Error("No refs found");
-  }
+  invariant(refs.length, "Expected at least one ref");
 
   if (refs.includes(refParam)) {
     let validVersion = semver.valid(refParam);
@@ -27,9 +26,7 @@ function getRefFromParam(
     .filter((ref) => semver.valid(ref))
     .sort(semver.rcompare);
 
-  if (!latestTag) {
-    throw new Error("No latest ref found");
-  }
+  invariant(latestTag, "No latest ref found");
 
   if (semver.satisfies(latestTag, refParam, { includePrerelease: true })) {
     return latestBranchRef;

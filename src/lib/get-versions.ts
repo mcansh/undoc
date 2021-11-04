@@ -1,4 +1,5 @@
 import * as semver from "semver";
+import invariant from "tiny-invariant";
 
 interface VersionHead {
   /**
@@ -78,6 +79,8 @@ function getVersions(refs: Array<string>): Array<VersionHead> {
       isLatest: false,
     };
   });
+
+  invariant(versions.length, "Expected at least one valid tag");
 
   versions[0].isLatest = true;
 
