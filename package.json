@@ -10,6 +10,9 @@
     "dev": "tsc --watch",
     "prepare": "npm run build"
   },
+  "files": [
+    "dist"
+  ],
   "repository": "https://github.com/mcansh/undoc",
   "author": "Logan McAnsh <logan@mcan.sh> (https://mcan.sh/)",
   "license": "MIT",
