@@ -121,7 +121,7 @@ function resolveUrl(from: string, to: string): URL {
       error.toString() === "TypeError: Failed to construct 'URL': Invalid URL"
     ) {
       throw TypeError(
-        "Failed to resolve URLs. The `from` argument is an invalid URL."
+        "Failed to resolve URL. The `from` argument is an invalid URL."
       );
     }
     throw error;
@@ -138,7 +138,7 @@ function cleanMarkdownPath(str: string): string {
   return str;
 }
 
-function isIndexPath(str?: string | undefined): boolean {
+function isIndexPath(str: string | undefined): boolean {
   if (!str) return false;
   let regex = /(\/index(\.md)?$|\/index(\.md)?(#))/;
   return regex.test(removeLeadingSlash(removeTrailingSlash(str)));

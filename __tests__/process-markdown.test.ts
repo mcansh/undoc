@@ -52,6 +52,12 @@ it("removes .md from links", () => {
   expect(cleanMarkdownPath("/foo/bar.md")).toBe("/foo/bar");
 });
 
+it("removes index.md and .md but keeps hash", () => {
+  expect(cleanMarkdownPath("/foo/bar.md#something=true")).toBe(
+    "/foo/bar#something=true"
+  );
+});
+
 describe("processMarkdown", () => {
   it("processes markdown", async () => {
     let baseUrl = new URL("https://example.com/");
@@ -76,6 +82,19 @@ describe("processMarkdown", () => {
 
     expect(result2).toMatchInlineSnapshot(`
 "<div class=\\"md-prose\\"><h3 id=\\"hello-world\\"><a href=\\"#hello-world\\" aria-hidden=\\"true\\" tabindex=\\"-1\\"><span class=\\"icon icon-link\\"></span></a>Hello world</h3><p>check this out! <a href=\\"/some/my-post\\">something</a></p></div>
+"
+`);
+
+    let result3 = await processMarkdown(
+      baseUrl,
+      "some link -> [home](getting-started/overview.md)",
+      {
+        linkOriginPath: "/",
+      }
+    );
+
+    expect(result3).toMatchInlineSnapshot(`
+"<div class=\\"md-prose\\"><p>some link -> <a href=\\"/getting-started/overview\\">home</a></p></div>
 "
 `);
   });
