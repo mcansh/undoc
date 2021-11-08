@@ -28,13 +28,13 @@ async function findMatchingEntries(
   filename: string,
   existingFilepaths: Array<string> = [],
   opts?: {
-    onNewEntry?: (entry: File) => Promise<void>;
-    onUpdatedEntry?: (entry: File) => Promise<void>;
-    onDeletedEntries?: (entry: Array<File>) => Promise<void>;
+    onNewEntry?: (newEntry: File) => Promise<void>;
+    onUpdatedEntry?: (updatedEntry: File) => Promise<void>;
+    onDeletedEntries?: (deletedEntries: Array<string>) => Promise<void>;
   }
 ): Promise<void> {
   let entries: { [path: string]: FileEntry } = {};
-  let entriesFound: Array<File> = [];
+  let foundEntries: Array<string> = [];
 
   stream
     .pipe(tar.extract())
@@ -84,7 +84,7 @@ async function findMatchingEntries(
         };
 
         if (existingFilepaths.includes(entry.path)) {
-          console.log(`Updating ${entry.path}`);
+          console.log(`> Updating ${entry.path}`);
           if (typeof opts?.onUpdatedEntry === "function") {
             await opts.onUpdatedEntry(entry);
           }
@@ -96,7 +96,7 @@ async function findMatchingEntries(
         }
 
         entries[entry.path] = entry;
-        entriesFound.push(entry);
+        foundEntries.push(entry.path);
 
         next();
       } catch (error) {
@@ -104,12 +104,11 @@ async function findMatchingEntries(
       }
     })
     .on("finish", () => {
-      const deletedEntries = entriesFound.filter(
-        (entry) => !existingFilepaths.includes(entry.path)
-      );
-
       if (typeof opts?.onDeletedEntries === "function") {
-        return opts?.onDeletedEntries(deletedEntries);
+        let deletedEntries = existingFilepaths.filter(
+          (existingFilepath) => !foundEntries.includes(existingFilepath)
+        );
+        return opts.onDeletedEntries(deletedEntries);
       }
     });
 }
