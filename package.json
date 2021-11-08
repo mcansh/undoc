@@ -16,8 +16,10 @@
   "repository": "https://github.com/mcansh/undoc",
   "author": "Logan McAnsh <logan@mcan.sh> (https://mcan.sh/)",
   "license": "MIT",
+  "peerDependencies": {
+    "@ryanflorence/md": "^7.0.0"
+  },
   "dependencies": {
-    "@ryanflorence/md": "7.0.1",
     "follow-redirects": "1.14.5",
     "gunzip-maybe": "1.4.2",
     "semver": "7.3.5",
