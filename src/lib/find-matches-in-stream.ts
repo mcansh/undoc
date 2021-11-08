@@ -28,8 +28,7 @@ async function findMatchingEntries(
   filename: string,
   existingFilepaths: Array<string> = [],
   opts?: {
-    onNewEntry?: (newEntry: File) => Promise<void>;
-    onUpdatedEntry?: (updatedEntry: File) => Promise<void>;
+    onEntry?: (newEntry: File) => Promise<void>;
     onDeletedEntries?: (deletedEntries: Array<string>) => Promise<void>;
   }
 ): Promise<void> {
@@ -83,16 +82,9 @@ async function findMatchingEntries(
           path: entry.path.replace(regex, ""),
         };
 
-        if (existingFilepaths.includes(entry.path)) {
-          console.log(`> Updating ${entry.path}`);
-          if (typeof opts?.onUpdatedEntry === "function") {
-            await opts.onUpdatedEntry(entry);
-          }
-        } else {
-          console.log(`Adding ${entry.path}`);
-          if (typeof opts?.onNewEntry === "function") {
-            await opts.onNewEntry(entry);
-          }
+        if (typeof opts?.onEntry === "function") {
+          console.log(`> Adding or updating ${entry.path}`);
+          await opts.onEntry(entry);
         }
 
         entries[entry.path] = entry;
