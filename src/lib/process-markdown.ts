@@ -15,7 +15,11 @@ import invariant from "tiny-invariant";
 async function reactRouterProcessMarkdown(
   baseUrl: URL,
   content: string,
-  opts: { linkOriginPath: string; preserveLinks?: boolean }
+  opts: {
+    linkOriginPath: string;
+    preserveLinks?: boolean;
+    resolveHref?(sourceHref: string): string | false;
+  }
 ): Promise<string> {
   let preserveLinks = opts.preserveLinks ?? false;
 
@@ -57,6 +61,13 @@ async function reactRouterProcessMarkdown(
      * browsing the markdown files directly as well as our docs site.
      */
     resolveHref(sourceHref) {
+      if (opts.resolveHref) {
+        let resolved = opts.resolveHref(sourceHref);
+        if (resolved !== false) {
+          return resolved;
+        }
+      }
+
       if (
         preserveLinks ||
         !isRelativeUrl(sourceHref) ||
