@@ -26,14 +26,9 @@ type FileEntry = File | Entry;
 async function findMatchingEntries(
   stream: NodeJS.ReadWriteStream,
   filename: string,
-  existingFilepaths: Array<string> = [],
-  opts?: {
-    onEntry?: (newEntry: File) => Promise<void>;
-    onDeletedEntries?: (deletedEntries: Array<string>) => Promise<void>;
-  }
+  onEntry: (newEntry: File) => Promise<void>
 ): Promise<void> {
   let entries: { [path: string]: FileEntry } = {};
-  let foundEntries: Array<string> = [];
 
   stream
     .pipe(tar.extract())
@@ -82,25 +77,13 @@ async function findMatchingEntries(
           path: entry.path.replace(regex, ""),
         };
 
-        if (typeof opts?.onEntry === "function") {
-          console.log(`> Adding or updating ${entry.path}`);
-          await opts.onEntry(entry);
-        }
+        await onEntry(entry);
 
         entries[entry.path] = entry;
-        foundEntries.push(entry.path);
 
         next();
       } catch (error) {
         next(error);
-      }
-    })
-    .on("finish", () => {
-      if (typeof opts?.onDeletedEntries === "function") {
-        let deletedEntries = existingFilepaths.filter(
-          (existingFilepath) => !foundEntries.includes(existingFilepath)
-        );
-        return opts.onDeletedEntries(deletedEntries);
       }
     });
 }
