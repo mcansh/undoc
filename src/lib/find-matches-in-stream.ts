@@ -4,19 +4,11 @@ import tar, { Headers as TarHeaders } from "tar-stream";
 
 import { bufferStream } from "./buffer-from-stream";
 
-export interface File {
-  type: "file";
-  path: string;
-  content: string;
-}
-
-interface Entry {
+export interface TarEntry {
   type: TarHeaders["type"];
   path: string;
-  content?: never;
+  content?: string;
 }
-
-type FileEntry = File | Entry;
 
 /**
  * @param {NodeJS.ReadWriteStream} stream
@@ -26,15 +18,15 @@ type FileEntry = File | Entry;
 async function findMatchingEntries(
   stream: NodeJS.ReadWriteStream,
   filename: string,
-  onEntry: (newEntry: File) => Promise<void>
+  onEntry: (newEntry: TarEntry) => Promise<void>
 ): Promise<void> {
-  let entries: { [path: string]: FileEntry } = {};
+  let entries: { [path: string]: TarEntry } = {};
 
   stream
     .pipe(tar.extract())
     .on("error", console.error)
     .on("entry", async (header, stream, next) => {
-      let entry: FileEntry = {
+      let entry: TarEntry = {
         // Most packages have header names that look like `package/index.js`
         // so we shorten that to just `/index.js` here. A few packages use a
         // prefix other than `package/`. e.g. the firebase package uses the
@@ -55,11 +47,9 @@ async function findMatchingEntries(
       }
 
       // Ignore non-files and files that aren't in this directory.
-      // Also ignore non markdown files.
       if (
         entry.type !== "file" ||
-        !path.dirname(entry.path).startsWith(filename) ||
-        !entry.path.endsWith(".md")
+        !path.dirname(entry.path).startsWith(filename)
       ) {
         stream.resume();
         stream.on("end", next);
@@ -68,19 +58,9 @@ async function findMatchingEntries(
 
       try {
         let content = await bufferStream(stream);
-
-        let regex = new RegExp(`^${filename}`, "i");
-
-        entry = {
-          type: "file",
-          content: content.toString("utf-8"),
-          path: entry.path.replace(regex, ""),
-        };
-
+        entry.content = content.toString("utf8");
         await onEntry(entry);
-
         entries[entry.path] = entry;
-
         next();
       } catch (error) {
         next(error);
