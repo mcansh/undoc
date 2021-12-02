@@ -12,16 +12,14 @@ export interface TarEntry {
 
 /**
  * @param {NodeJS.ReadWriteStream} stream
- * @param {string} filename
+ * @param {string} dirname
  * @returns {Promise<Array<File>>}
  */
 async function findMatchingEntries(
   stream: NodeJS.ReadWriteStream,
-  filename: string,
-  onEntry: (newEntry: TarEntry) => Promise<void>
+  dirname: string,
+  onEntry: (entry: TarEntry) => Promise<void>
 ): Promise<void> {
-  let entries: { [path: string]: TarEntry } = {};
-
   stream
     .pipe(tar.extract())
     .on("error", console.error)
@@ -35,21 +33,10 @@ async function findMatchingEntries(
         type: header.type,
       };
 
-      // Dynamically create "directory" entries for all subdirectories
-      // in this entry's path. Some tarballs omit directory entries for
-      // some reason, so this is the "brute force" method.
-      let dir = path.dirname(entry.path);
-      while (dir !== "/") {
-        if (!entries[dir] && path.dirname(dir).startsWith(filename)) {
-          entries[dir] = { path: dir, type: "directory" };
-        }
-        dir = path.dirname(dir);
-      }
-
       // Ignore non-files and files that aren't in this directory.
       if (
         entry.type !== "file" ||
-        !path.dirname(entry.path).startsWith(filename)
+        !path.dirname(entry.path).startsWith(dirname)
       ) {
         stream.resume();
         stream.on("end", next);
@@ -60,7 +47,6 @@ async function findMatchingEntries(
         let content = await bufferStream(stream);
         entry.content = content.toString("utf8");
         await onEntry(entry);
-        entries[entry.path] = entry;
         next();
       } catch (error) {
         next(error);
