@@ -46,7 +46,6 @@ async function getPackage(
 
   if (res.statusCode === 200) {
     let stream = res.pipe(gunzip());
-    // stream.pause();
     return stream;
   }
 
