@@ -22,11 +22,9 @@ function getBranchOrTagFromRef(ref: string): string {
   if (ref.startsWith("refs/heads/")) {
     return getBranchFromRef(ref);
   }
-
   if (ref.startsWith("refs/tags/")) {
     return getTagFromRef(ref);
   }
-
   throw new Error(`Expected a ref, received "${ref}"`);
 }
 
@@ -60,10 +58,14 @@ function getVersionHead(ref: string): string {
 
 function getVersions(refs: Array<string>): Array<VersionHead> {
   let tags = refs
-    .map((ref) => ref.replace(/^refs\/tags\//, ""))
     .map((ref) => {
-      return ref.replace(/^(.*?)@(?=(v)?\d)/, "");
-    });
+      try {
+        return getBranchOrTagFromRef(ref);
+      } catch (error) {
+        // do nothing
+      }
+    })
+    .filter((v): v is string => !!v);
   let validTags = tags.filter((ref) => semver.valid(ref));
 
   let sorted = validTags.sort((a, b) => semver.compare(b, a));
