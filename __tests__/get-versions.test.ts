@@ -18,7 +18,7 @@ it("throws an error when passed an invalid ref", () => {
   expect(() =>
     getBranchOrTagFromRef("something")
   ).toThrowErrorMatchingInlineSnapshot(
-    `"Invariant failed: Expected a ref, received \\"something\\""`
+    `"Expected a ref, received \\"something\\""`
   );
 });
 
@@ -97,4 +97,34 @@ it("returns a VersionHead for each version", () => {
       isLatest: false,
     },
   ]);
+});
+
+it("works with remix@ tag names", () => {
+  let versions = getVersions([
+    "refs/heads/main",
+    "refs/tags/remix@1.6.5",
+    "refs/tags/1.6.4",
+    "refs/tags/1.6.3",
+  ]);
+
+  expect(versions).toHaveLength(3);
+  expect(versions).toMatchInlineSnapshot(`
+Array [
+  Object {
+    "head": "v1",
+    "isLatest": true,
+    "version": "1.6.5",
+  },
+  Object {
+    "head": "v1",
+    "isLatest": false,
+    "version": "1.6.4",
+  },
+  Object {
+    "head": "v1",
+    "isLatest": false,
+    "version": "1.6.3",
+  },
+]
+`);
 });
