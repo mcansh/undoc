@@ -19,9 +19,15 @@ interface VersionHead {
 }
 
 function getBranchOrTagFromRef(ref: string): string {
-  let regex = /^refs\/(heads|tags)\//;
-  invariant(regex.test(ref), `Expected a ref, received "${ref}"`);
-  return ref.replace(regex, "");
+  if (ref.startsWith("refs/heads/")) {
+    return getBranchFromRef(ref);
+  }
+
+  if (ref.startsWith("refs/tags/")) {
+    return getTagFromRef(ref);
+  }
+
+  throw new Error(`Expected a ref, received "${ref}"`);
 }
 
 function getBranchFromRef(ref: string): string {
@@ -33,7 +39,7 @@ function getBranchFromRef(ref: string): string {
 function getTagFromRef(ref: string): string {
   let regex = /^refs\/tags\//;
   invariant(regex.test(ref), `Expected a tag ref, received "${ref}"`);
-  return ref.replace(regex, "");
+  return ref.replace(regex, "").replace(/^(.*?)@(?=(v)?\d)/, "");
 }
 
 function getVersionHead(ref: string): string {
@@ -53,7 +59,11 @@ function getVersionHead(ref: string): string {
 }
 
 function getVersions(refs: Array<string>): Array<VersionHead> {
-  let tags = refs.map((ref) => ref.replace(/^refs\/tags\//, ""));
+  let tags = refs
+    .map((ref) => ref.replace(/^refs\/tags\//, ""))
+    .map((ref) => {
+      return ref.replace(/^(.*?)@(?=(v)?\d)/, "");
+    });
   let validTags = tags.filter((ref) => semver.valid(ref));
 
   let sorted = validTags.sort((a, b) => semver.compare(b, a));
